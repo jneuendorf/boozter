@@ -1,14 +1,11 @@
 import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
 // import { DrinksCollection } from '/imports/api/drinks'
+import { Settings } from '/imports/api/settings/collection'
 
 import './registerMethods'
+import './registerPublications'
 import { initDb } from './startup'
-
-
-// function insertLink({ title, url }) {
-//     DrinksCollection.insert({title, url, createdAt: new Date()})
-// }
 
 
 const SEED_USERNAME = 'test'
@@ -25,26 +22,5 @@ Meteor.startup(() => {
         })
     }
 
-    // // If the Links collection is empty, add some data.
-    // if (DrinksCollection.find().count() === 0) {
-    //     insertLink({
-    //         title: 'Do the Tutorial',
-    //         url: 'https://www.meteor.com/tutorials/react/creating-an-app',
-    //     })
-    //
-    //     insertLink({
-    //         title: 'Follow the Guide',
-    //         url: 'http://guide.meteor.com',
-    //     })
-    //
-    //     insertLink({
-    //         title: 'Read the Docs',
-    //         url: 'https://docs.meteor.com',
-    //     })
-    //
-    //     insertLink({
-    //         title: 'Discussions',
-    //         url: 'https://forums.meteor.com',
-    //     })
-    // }
+    // Settings.rawCollection().drop()
 })

@@ -1,11 +1,11 @@
-import { check } from 'meteor/check'
+// import { check } from 'meteor/check'
 
 import { Drinks } from './collection'
 import { userAuthorizedMethods } from '/utils/meteor/methods'
 
 
 Meteor.methods(userAuthorizedMethods({
-    'drinks.insert'(text) {
+    'drinks.insert'(name, calories, alc) {
         // check(text, String)
         //
         // if (!this.userId) {
@@ -13,7 +13,9 @@ Meteor.methods(userAuthorizedMethods({
         // }
 
         Drinks.insert({
-            text,
+            name,
+            calories,
+            alc,
             createdAt: new Date(),
             userId: this.userId,
         })
