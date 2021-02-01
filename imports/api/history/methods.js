@@ -11,8 +11,13 @@ Meteor.methods(userAuthorizedMethods({
         // if (!this.userId) {
         //     throw new Meteor.Error('Not authorized.')
         // }
-        console.log('history.insert?', model)
-        // History.insert(model)
+        console.log('history.insert?', model, this.userId)
+        if (model.hasOwnProperty('createdAt')) {
+            throw new Meteor.Error('"createdAt" must not be provided by the frontend')
+        }
+        model.createdAt = new Date()
+
+        History.insert(model)
     },
 
     // 'drinks.remove'(taskId) {

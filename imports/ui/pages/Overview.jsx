@@ -203,7 +203,7 @@ export const Overview = (props) => {
                 </Col>
             </Row>
             <Row style={{ height: '100px' }}>
-                <Col span={8} style={{ backgroundColor: 'red' }}>
+                <Col span={12} style={{ backgroundColor: 'red' }}>
                     <Link to={Routes.HISTORY}>
                         <BarsOutlined />
                         {/* <Button
@@ -212,22 +212,13 @@ export const Overview = (props) => {
                         /> */}
                     </Link>
                 </Col>
-                <Col span={8} style={{ backgroundColor: 'yellow' }}>
+                <Col span={12} style={{ backgroundColor: 'yellow' }}>
                     <Link to={Routes.SETTINGS}>
                         <SettingOutlined />
                     </Link>
                     {/* <Button
                         icon={<SettingOutlined />}
                         onClick={event => console.log('SETTINGS')}
-                    /> */}
-                </Col>
-                <Col span={8} style={{ backgroundColor: 'green' }}>
-                    <Link to={Routes.ADD_DRINK}>
-                        <PlusOutlined />
-                    </Link>
-                    {/* <Button
-                        icon={<PlusOutlined />}
-                        onClick={event => console.log('ADD')}
                     /> */}
                 </Col>
             </Row>

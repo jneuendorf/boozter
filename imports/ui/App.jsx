@@ -40,9 +40,6 @@ export const App = () => {
                     <Route path={Routes.SETTINGS}>
                         <Pages.Settings />
                     </Route>
-                    <Route path={Routes.ADD_DRINK}>
-                        <Pages.AddDrink />
-                    </Route>
                     <Route>
                         <Pages.NotFound />
                     </Route>

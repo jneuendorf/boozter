@@ -1,12 +1,34 @@
 import React from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
-import { Layout, List, Spin } from 'antd'
+import { Layout, Spin, Table } from 'antd'
 
 import {
     History as HistoryCollection,
 } from '/imports/api/history/collection'
 
 const { Header, Footer, Sider, Content } = Layout
+
+
+const columns = [
+    {
+        title: 'Name',
+        dataIndex: 'name',
+    },
+    {
+        title: 'Amount',
+        key: 'amount',
+        render(text, record, index) {
+            return `${record.amount} ${record.amountUnit}`
+        }
+    },
+    {
+        title: 'Date',
+        key: 'createdAt',
+        render(text, record, index) {
+            return record.createdAt.toLocaleString()
+        }
+    },
+]
 
 
 export const History = (props) => {
@@ -21,17 +43,16 @@ export const History = (props) => {
         const history = HistoryCollection.find({ userId }).fetch()
         return {
             isLoading: false,
-            // userId,
             history,
         }
     })
     return <Layout>
         <h1>HISTORY</h1>
         <Spin spinning={isLoading} tip='Loading...'>
-            <List
+            <Table
                 bordered
                 dataSource={history}
-                renderItem={item => <List.Item>{item}</List.Item>}
+                columns={columns}
             />
         </Spin>
     </Layout>
