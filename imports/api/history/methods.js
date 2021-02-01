@@ -1,48 +1,27 @@
 // import { check } from 'meteor/check'
 
-import { Drinks } from './collection'
+import { History } from './collection'
 import { userAuthorizedMethods } from '/utils/meteor/methods'
 
 
 Meteor.methods(userAuthorizedMethods({
-    'drinks.insert'(name, calories, alc) {
+    'history.insert'(model) {
         // check(text, String)
         //
         // if (!this.userId) {
         //     throw new Meteor.Error('Not authorized.')
         // }
-
-        Drinks.insert({
-            name,
-            calories,
-            alc,
-            createdAt: new Date(),
-            userId: this.userId,
-        })
+        console.log('history.insert?', model)
+        // History.insert(model)
     },
 
-    'drinks.remove'(taskId) {
-        // check(taskId, String)
-        //
-        // if (!this.userId) {
-        //     throw new Meteor.Error('Not authorized.')
-        // }
+    // 'drinks.remove'(taskId) {
+    //     // check(taskId, String)
+    //     //
+    //     // if (!this.userId) {
+    //     //     throw new Meteor.Error('Not authorized.')
+    //     // }
 
-        Drinks.remove(taskId)
-    },
-
-    'drinks.setIsChecked'(taskId, isChecked) {
-        // check(taskId, String)
-        // check(isChecked, Boolean)
-        //
-        // if (!this.userId) {
-        //     throw new Meteor.Error('Not authorized.')
-        // }
-
-        Drinks.update(taskId, {
-            $set: {
-                isChecked
-            }
-        })
-    }
+    //     History.remove(taskId)
+    // },
 }))

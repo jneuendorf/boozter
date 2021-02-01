@@ -10,17 +10,27 @@ import 'antd/dist/antd.css'
 
 import * as Routes from './routes'
 import * as Pages from './pages/'
-// import { UserRedirect } from './UserRedirect'
+import { Spin } from 'antd'
 
 
 export const App = () => {
-    const user = useTracker(() => Meteor.user(), [])
+    const { isLoading, user } = useTracker(() => {
+        const user = Meteor.user()
+        return {
+            isLoading: !Accounts.loginServicesConfigured(),
+            user,
+        }
+    })
+    console.log('APP: user?', user, isLoading)
+
+    if (isLoading) {
+        return <Spin tip='Loading' />
+    }
 
     return <Router>
-        <Switch>
-            {
-                user
-                ? <Fragment>
+        {
+            user
+                ? <Switch>
                     <Route path={Routes.OVERVIEW}>
                         <Pages.Overview />
                     </Route>
@@ -33,32 +43,16 @@ export const App = () => {
                     <Route path={Routes.ADD_DRINK}>
                         <Pages.AddDrink />
                     </Route>
-                    <Redirect to={Routes.OVERVIEW} />
-                </Fragment>
-                : <Fragment>
+                    <Route>
+                        <Pages.NotFound />
+                    </Route>
+                </Switch>
+                : <Switch>
                     <Route path={Routes.LOGIN}>
                         <Pages.Login />
                     </Route>
                     <Redirect to={Routes.LOGIN} />
-                </Fragment>
-            }
-            {/* <Route path={Routes.LOGIN}>
-                <Pages.Login />
-            </Route>
-
-            <Route path={Routes.OVERVIEW}>
-                <Pages.Overview />
-            </Route>
-            <Route path={Routes.HISTORY}>
-                <Pages.History />
-            </Route>
-            <Route path={Routes.SETTINGS}>
-                <Pages.Settings />
-            </Route>
-            <Route path={Routes.ADD_DRINK}>
-                <Pages.AddDrink />
-            </Route> */}
-            {/* <UserRedirect /> */}
-        </Switch>
+                </Switch>
+        }
     </Router>
 }

@@ -2,6 +2,8 @@ import { Mongo } from 'meteor/mongo'
 import SimpleSchema from 'simpl-schema'
 import { SimpleSchema2Bridge } from 'uniforms-bridge-simple-schema-2'
 
+import { ALLOWED_AMOUNT_UNITS } from '../common'
+
 
 export const Settings = new Mongo.Collection('settings')
 
@@ -48,6 +50,7 @@ Settings.schema = new SimpleSchema({
         defaultValue: [
             {
                 name: 'Beer (default)',
+                isFavorite: false,
                 // Average without alc free according to
                 // https://www.kalorientabelle.net/kalorien/bier
                 calories: 44,
@@ -59,6 +62,10 @@ Settings.schema = new SimpleSchema({
     },
     'beverages.$': Object,
     'beverages.$.name': String,
+    'beverages.$.isFavorite': {
+        type: Boolean,
+        defaultValue: false,
+    },
     'beverages.$.calories': {
         type: Number,
         min: 0,
@@ -75,7 +82,7 @@ Settings.schema = new SimpleSchema({
     },
     'beverages.$.usualAmountUnit': {
         type: String,
-        allowedValues: ['ml', 'US fl oz', 'imp fl oz'],
+        allowedValues: ALLOWED_AMOUNT_UNITS,
         label: 'Unit of smallest usual amount',
     },
 })

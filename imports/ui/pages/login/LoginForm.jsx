@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useTracker } from 'meteor/react-meteor-data'
+// import { useTracker } from 'meteor/react-meteor-data'
 import { Redirect, useHistory } from 'react-router-dom'
 // import { Meteor } from 'meteor/meteor'
 import { Form, Input, Button } from 'antd'
@@ -15,7 +15,6 @@ const tailLayout = {
 }
 
 export const LoginForm = (props) => {
-    const user = useTracker(() => Meteor.user(), [])
     const [username, setUsername] = React.useState('')
     const [password, setPassword] = React.useState('')
     // const history = useHistory()
@@ -27,38 +26,33 @@ export const LoginForm = (props) => {
         // history.push(Routes.HOME)
     }
 
-    return (
-        user
-        // Let `App` handle the state
-        ? <Redirect to={Routes.HOME} />
-        : <Form layout="horizontal" name="basic" onFinish={onFinish}>
-            <Form.Item
-                label="Username"
-                name="username"
-                rules={[{
-                    required: true,
-                    message: 'Please input your username!',
-                }]}
-            >
-                <Input onChange={e => setUsername(e.target.value)} />
-            </Form.Item>
+    return <Form layout="horizontal" name="basic" onFinish={onFinish}>
+        <Form.Item
+            label="Username"
+            name="username"
+            rules={[{
+                required: true,
+                message: 'Please input your username!',
+            }]}
+        >
+            <Input onChange={e => setUsername(e.target.value)} />
+        </Form.Item>
 
-            <Form.Item
-                label="Password"
-                name="password"
-                rules={[{
-                    required: true,
-                    message: 'Please input your password!',
-                }]}
-            >
-                <Input.Password onChange={e => setPassword(e.target.value)} />
-            </Form.Item>
+        <Form.Item
+            label="Password"
+            name="password"
+            rules={[{
+                required: true,
+                message: 'Please input your password!',
+            }]}
+        >
+            <Input.Password onChange={e => setPassword(e.target.value)} />
+        </Form.Item>
 
-            <Form.Item {...tailLayout}>
-                <Button type="primary" htmlType="submit">
-                    Submit
-                </Button>
-            </Form.Item>
-        </Form>
-    )
+        <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit">
+                Submit
+            </Button>
+        </Form.Item>
+    </Form>
 }

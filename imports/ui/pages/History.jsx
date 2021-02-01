@@ -27,7 +27,7 @@ export const History = (props) => {
     })
     return <Layout>
         <h1>HISTORY</h1>
-        <Spin spinning={isLoading} tip="Loading...">
+        <Spin spinning={isLoading} tip='Loading...'>
             <List
                 bordered
                 dataSource={history}

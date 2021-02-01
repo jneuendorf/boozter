@@ -15,8 +15,7 @@ const { Header, Footer, Sider, Content } = Layout
 export const Settings = (props) => {
     const { isLoading, userId, settings} = useTracker(() => {
         const user = Meteor.user()
-        const handler = Meteor.subscribe('settings')
-        if (!user || !handler.ready()) {
+        if (!user || !Meteor.subscribe('settings').ready()) {
             return { isLoading: true }
         }
 
@@ -36,15 +35,18 @@ export const Settings = (props) => {
         }
     })
     const handleSubmit = useCallback(
-        () => Meteor.call('settings.upsert', userId, settings),
-        [settings],
+        // TODO: Use `model` for upsert
+        (model) => {
+            Meteor.call('settings.upsert', userId, model)
+        },
+        [userId],
     )
 
     console.log(settings)
 
     return <Layout>
         <h1>SETTINGS</h1>
-        <Spin spinning={isLoading} tip="Loading...">
+        <Spin spinning={isLoading} tip='Loading...'>
             <AutoForm
                 schema={schema}
                 model={settings}
