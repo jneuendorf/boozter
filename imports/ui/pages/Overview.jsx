@@ -94,7 +94,7 @@ const Emoji = (props) => (
 
 const ERROR_NO_SETTINGS = 'No settings'
 
-const schema = HistoryCollection.schema.omit('userId', 'createdAt')
+const schema = HistoryCollection.schema.omit('userId')
 const bridge = new SimpleSchema2Bridge(schema)
 
 
@@ -140,6 +140,7 @@ export const Overview = (props) => {
                 ...HistoryCollection.schema.clean({}),
                 userId,
                 name: beverages[0] ? beverages[0].name : undefined,
+                createdAt: new Date(),
             }
             return {
                 isLoading: false,
@@ -194,6 +195,7 @@ export const Overview = (props) => {
                 />
                 <AutoField name='amount' />
                 <AutoField name='amountUnit' />
+                <AutoField name='createdAt' />
                 <ErrorsField />
                 <SubmitField />
             </BeverageForm>
