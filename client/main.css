@@ -2,3 +2,14 @@ body {
     /* padding: 10px; */
     font-family: sans-serif;
 }
+
+#react-target {
+    margin: 0 auto;
+    max-width: 992px;
+}
+
+@media (max-width: 992px) {
+    #react-target {
+        height: 100%;
+    }
+}

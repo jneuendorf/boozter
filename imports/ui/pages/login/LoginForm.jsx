@@ -1,6 +1,5 @@
 import * as React from 'react'
 // import { useTracker } from 'meteor/react-meteor-data'
-import { Redirect, useHistory } from 'react-router-dom'
 // import { Meteor } from 'meteor/meteor'
 import { Form, Input, Button } from 'antd'
 

@@ -1,60 +1,25 @@
 import React, { Fragment, useCallback } from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
-import { Link } from 'react-router-dom'
-import {
-    Layout,
-    Row,
-    Col,
-    Divider,
-    Typography,
-    Button,
-} from 'antd'
-import { AutoField, AutoFields, AutoForm, ErrorsField, HiddenField, ListField, ListItemField, SelectField, SubmitField } from 'uniforms-antd'
+import { Flex } from 'antd-mobile'
+import { AutoField, AutoForm, ErrorsField, SelectField, SubmitField } from 'uniforms-antd'
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2'
 import { Line } from '@ant-design/charts'
-import {
-    BarsOutlined,
-    // <DatabaseOutlined />
-    SettingOutlined,
-    PlusOutlined,
-    // <UserOutlined />
-    // <BarsOutlined />
-    // two tone
-    SmileTwoTone,
-    MehTwoTone,
-    FrownTwoTone,
-} from '@ant-design/icons'
 
 import { History as HistoryCollection } from '/imports/api/history/collection'
 import { Settings as SettingsCollection } from '/imports/api/settings/collection'
-import * as Routes from '../routes'
+import * as Breakpoints from '../breakpoints'
+import { alc } from '../utils'
 
 
-const { Header, Footer, Sider, Content } = Layout
-const { Title } = Typography
-
-const data = [
-    { year: '1991', value: 3 },
-    { year: '1992', value: 4 },
-    { year: '1993', value: 3.5 },
-    { year: '1994', value: 5 },
-    { year: '1995', value: 4.9 },
-    { year: '1996', value: 6 },
-    { year: '1997', value: 7 },
-    { year: '1998', value: 9 },
-    { year: '1999', value: 13 },
-]
 const config = {
-    data,
-    // width: 400,
-    // height: 100,
     autoFit: true,
-    padding: [15, 0, 0, 0],
+    padding: [20, 20, 20, 0],
     xAxis: false,
-    xField: 'year',
-    yAxis: false,
-    yField: 'value',
+    xField: 'x',
+    yAxis: true,
+    yField: 'y',
     smooth: true,
+    connectNulls: true,
     animate: {
         appear: {
             animation: 'path-in',
@@ -72,6 +37,14 @@ const config = {
             },
         },
     ],
+    tooltip: {
+        fields: ['x', 'y'],
+        showTitle: false,
+        formatter: (datum) => ({
+            name: datum.x.toLocaleString(undefined, { dateStyle: "short" }),
+            value: datum.y,
+        }),
+    },
     // point: {
     //     size: 5,
     //     shape: 'diamond',
@@ -82,14 +55,6 @@ const config = {
     //     },
     // },
 }
-
-// 😁😄🙂😕🥴🤮😵
-const Emoji = (props) => (
-    <Title style={{ textAlign: 'center' }}>
-        {/* 😁 */}
-        <SmileTwoTone twoToneColor='#52c41a' style={{ fontSize: '200px' }} />
-    </Title>
-)
 
 
 const ERROR_NO_SETTINGS = 'No settings'
@@ -112,8 +77,13 @@ class BeverageForm extends AutoForm {
 }
 
 
-export const Overview = (props) => {
-    const { isLoading, userId, history, beverages } = useTracker(() => {
+export const Overview = () => {
+    const {
+        isLoading,
+        history=[],
+        historyModel,
+        beverages=[],
+    } = useTracker(() => {
         const user = Meteor.user()
         if (
             !user
@@ -130,100 +100,85 @@ export const Overview = (props) => {
             return {
                 userId,
                 isLoading: false,
+                // TODO: Handle error
                 error: ERROR_NO_SETTINGS,
             }
         }
         else {
             console.log('settings', settings)
             const beverages = [...settings.beverages].sort((a, b) => b.isFavorite - a.isFavorite)
-            const history = {
+            const abvByBeverage = Object.fromEntries(
+                settings.beverages.map(({name, abv}) => [name, abv])
+            )
+            const history = (
+                HistoryCollection.find({ userId }).fetch()
+                .map(({name, createdAt, amount, amountUnit}) => ({
+                    x: new Date(createdAt.toDateString()),
+                    y: alc(amount, amountUnit, abvByBeverage[name]),
+                }))
+            )
+            console.log('history', history)
+            const historyModel = {
                 ...HistoryCollection.schema.clean({}),
                 userId,
                 name: beverages[0] ? beverages[0].name : undefined,
                 createdAt: new Date(),
             }
             return {
-                isLoading: false,
                 userId,
+                isLoading: false,
                 history,
+                historyModel,
                 beverages,
             }
         }
 
     })
-    const handleSubmit = useCallback(
-        (model) => {
-            console.log('history.insert?', model)
-            Meteor.call('history.insert', model)
-        },
-        [history],
-    )
+    const handleSubmit = useCallback((model) => {
+        console.log('history.insert?', model)
+        Meteor.call('history.insert', model)
+    })
 
-    console.log('history', history)
+    console.log('historyModel', history)
 
+    return <Fragment>
+        <Breakpoints.Desktop>
+            1
+        </Breakpoints.Desktop>
 
-    return <Layout>
-        {/* <Header /> */}
-        {/* <Statistic /> */}
-        <Content style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <Button onClick={() => Meteor.logout()}>logout</Button>
-            <Row style={{ height: '100px' }}>
-                <Col span={24}>
-                    <Line {...config} />
-                </Col>
-            </Row>
-            <Divider />
-            <BeverageForm
-                schema={bridge}
-                model={history}
-                disabled={isLoading}
-                onSubmit={handleSubmit}
-                beverages={beverages}
-            >
-                <SelectField
-                    name='name'
-                    options={
-                        beverages
-                            ? beverages.map(
-                                ({ name, isFavorite }) => ({
-                                    label: isFavorite ? `${name} *` : name,
-                                    value: name,
-                                })
-                            )
-                            : []
-                    }
-                />
-                <AutoField name='amount' />
-                <AutoField name='amountUnit' />
-                <AutoField name='createdAt' />
-                <ErrorsField />
-                <SubmitField />
-            </BeverageForm>
-            <Row style={{ flex: 1 }}>
-                <Col span={24}>
-                    <Emoji />
-                </Col>
-            </Row>
-            <Row style={{ height: '100px' }}>
-                <Col span={12} style={{ backgroundColor: 'red' }}>
-                    <Link to={Routes.HISTORY}>
-                        <BarsOutlined />
-                        {/* <Button
-                            icon={<BarsOutlined />}
-                            onClick={event => console.log('LIST')}
-                        /> */}
-                    </Link>
-                </Col>
-                <Col span={12} style={{ backgroundColor: 'yellow' }}>
-                    <Link to={Routes.SETTINGS}>
-                        <SettingOutlined />
-                    </Link>
-                    {/* <Button
-                        icon={<SettingOutlined />}
-                        onClick={event => console.log('SETTINGS')}
-                    /> */}
-                </Col>
-            </Row>
-        </Content>
-    </Layout>
+        <Breakpoints.TabletOrMobile>
+            {
+                history.length
+                ? <Flex>
+                    {/* <Flex.Item> */}
+                        <Line {...config} data={history} />
+                    {/* </Flex.Item> */}
+                </Flex>
+                : null
+            }
+            <Flex>
+                {/* TODO: Dropdown for usual beverages from settings and customization only after action */}
+                <BeverageForm
+                    schema={bridge}
+                    model={historyModel}
+                    disabled={isLoading}
+                    onSubmit={handleSubmit}
+                    beverages={beverages}
+                >
+                    <SelectField
+                        name='name'
+                        options={beverages.map(({ name, isFavorite }) => ({
+                            label: isFavorite ? `${name} *` : name,
+                            value: name,
+                        }))}
+                    />
+                    <AutoField name='amount' />
+                    <AutoField name='amountUnit' />
+                    <AutoField name='createdAt' />
+                    <ErrorsField />
+                    <SubmitField />
+                </BeverageForm>
+            </Flex>
+        </Breakpoints.TabletOrMobile>
+    </Fragment>
 }

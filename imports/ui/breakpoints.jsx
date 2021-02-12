@@ -10,6 +10,11 @@ export const Desktop = ({ children }) => {
 }
 
 
+export const TabletOrMobile = ({ children }) => {
+    return useMediaQuery({ maxWidth: TABLET_MAX - 1 }) && children
+}
+
+
 export const Tablet = ({ children }) => {
     return useMediaQuery({ minWidth: MOBILE_MAX, maxWidth: TABLET_MAX - 1 }) && children
 }

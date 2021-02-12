@@ -45,7 +45,6 @@ export const Settings = (props) => {
     console.log(settings)
 
     return <Layout>
-        <h1>SETTINGS</h1>
         <Spin spinning={isLoading} tip='Loading...'>
             <AutoForm
                 schema={schema}

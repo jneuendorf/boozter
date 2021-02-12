@@ -1,20 +1,23 @@
 import React, { Fragment, useState } from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
-import {
-    BrowserRouter as Router,
-    Link,
-    Redirect,
-    Route,
-    Switch,
-} from 'react-router-dom'
-import { Menu, Spin } from 'antd'
-import { BarsOutlined, HomeOutlined, SettingOutlined } from '@ant-design/icons'
+import Menu from 'antd/lib/menu'
+import Spin from 'antd/lib/spin'
+import { TabBar } from 'antd-mobile'
+import { DatabaseOutlined, DashboardOutlined, DashboardTwoTone, SettingOutlined, DatabaseTwoTone, SettingTwoTone } from '@ant-design/icons'
 
 import 'antd/dist/antd.css'
+import 'antd-mobile/dist/antd-mobile.css'
 
-// import * as Breakpoints from './breakpoints'
-import * as Routes from './routes'
+import * as Breakpoints from './breakpoints'
 import * as Pages from './pages'
+import { LogoutButton } from './LogoutButton'
+
+
+const Navigation = {
+    OVERVIEW: 'overview',
+    HISTORY: 'history',
+    SETTINGS: 'settings',
+}
 
 
 export const App = () => {
@@ -25,56 +28,77 @@ export const App = () => {
             user,
         }
     })
-    const [currentTab, setCurrentTab] = useState(
-        window.location.pathname.replace(/\//g, '')
-    )
+    const [currentTab, setCurrentTab] = useState(Navigation.OVERVIEW)
     console.log('APP: user?', user, isLoading)
 
     if (isLoading) {
         return <Spin tip='Loading' />
     }
 
-
-    return <Router>
+    return <Fragment>
         {
             user
                 ? <Fragment>
-                    <Menu
-                        mode="horizontal"
-                        selectedKeys={[currentTab]}
-                        onClick={({ key }) => setCurrentTab(key)}
-                    >
-                        <Menu.Item key="overview" icon={<HomeOutlined />}>
-                            <Link to={Routes.OVERVIEW}>Overview</Link>
-                        </Menu.Item>
-                        <Menu.Item key="history" icon={<BarsOutlined />}>
-                            <Link to={Routes.HISTORY}>History</Link>
-                        </Menu.Item>
-                        <Menu.Item key="settings" icon={<SettingOutlined />}>
-                            <Link to={Routes.SETTINGS}>Settings</Link>
-                        </Menu.Item>
-                    </Menu>
-                    <Switch>
-                        <Route path={Routes.OVERVIEW}>
-                            <Pages.Overview />
-                        </Route>
-                        <Route path={Routes.HISTORY}>
-                            <Pages.History />
-                        </Route>
-                        <Route path={Routes.SETTINGS}>
-                            <Pages.Settings />
-                        </Route>
-                        <Route>
-                            <Pages.NotFound />
-                        </Route>
-                    </Switch>
+                    <Breakpoints.Desktop>
+                        <Menu
+                            mode="horizontal"
+                            selectedKeys={[currentTab]}
+                            onClick={({ key }) => setCurrentTab(key)}
+                        >
+                            <Menu.Item key={Navigation.OVERVIEW} icon={<DashboardOutlined />}>
+                                Overview
+                            </Menu.Item>
+                            <Menu.Item key={Navigation.HISTORY} icon={<DatabaseOutlined />}>
+                                History
+                            </Menu.Item>
+                            <Menu.Item key={Navigation.SETTINGS} icon={<SettingOutlined />}>
+                                Settings
+                            </Menu.Item>
+                            <Menu.Item style={{float: 'right'}}>
+                                <LogoutButton />
+                            </Menu.Item>
+                        </Menu>
+                        {currentTab === Navigation.OVERVIEW && <Pages.Overview />}
+                        {currentTab === Navigation.HISTORY && <Pages.History />}
+                        {currentTab === Navigation.SETTINGS && <Pages.Settings />}
+                    </Breakpoints.Desktop>
+
+                    <Breakpoints.TabletOrMobile>
+                        <TabBar>
+                            <TabBar.Item
+                                key={Navigation.OVERVIEW}
+                                selected={currentTab === Navigation.OVERVIEW}
+                                title='Overview'
+                                icon={<DashboardOutlined />}
+                                selectedIcon={<DashboardTwoTone />}
+                                onPress={() => setCurrentTab(Navigation.OVERVIEW)}
+                            >
+                                <Pages.Overview />
+                            </TabBar.Item>
+                            <TabBar.Item
+                                key={Navigation.HISTORY}
+                                selected={currentTab === Navigation.HISTORY}
+                                title='History'
+                                icon={<DatabaseOutlined />}
+                                selectedIcon={<DatabaseTwoTone />}
+                                onPress={() => setCurrentTab(Navigation.HISTORY)}
+                            >
+                                <Pages.History />
+                            </TabBar.Item>
+                            <TabBar.Item
+                                key={Navigation.SETTINGS}
+                                selected={currentTab === Navigation.SETTINGS}
+                                title='Settings'
+                                icon={<SettingOutlined />}
+                                selectedIcon={<SettingTwoTone />}
+                                onPress={() => setCurrentTab(Navigation.SETTINGS)}
+                            >
+                                <Pages.Settings />
+                            </TabBar.Item>
+                        </TabBar>
+                    </Breakpoints.TabletOrMobile>
                 </Fragment>
-                : <Switch>
-                    <Route path={Routes.LOGIN}>
-                        <Pages.Login />
-                    </Route>
-                    <Redirect to={Routes.LOGIN} />
-                </Switch>
+                : <Pages.Login />
         }
-    </Router>
+    </Fragment>
 }
