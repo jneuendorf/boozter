@@ -1,4 +1,4 @@
-export * from './History'
-export * from './login'
-export * from './Overview'
-export * from './Settings'
+export { History } from './History'
+export { Login } from './login'
+export { Overview } from './overview'
+export { Settings } from './Settings'
