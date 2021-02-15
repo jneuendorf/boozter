@@ -25,17 +25,20 @@ export const alc = (amount, unit, abv) => {
  * summing up the amounts normalized to ml.
  *
  * @param {{name: string, amount: number, amountUnit: string, createdAt: Date}[]} records
+ * @returns {{aggregated: {date: string, amount: number, amountUnit: number}, records: []}}
  */
 export const aggregatedHistory = (records, get_abv) => {
     const DATETIME_FORMAT = new Intl.DateTimeFormat(undefined, { dateStyle: 'short' })
 
     return Object.values(records.reduce(
         (historyByDate, record) => {
-            const date = DATETIME_FORMAT.format(record.createdAt)
+            const date = record.createdAt
+            const key = DATETIME_FORMAT.format(date)
 
-            if (!historyByDate[date]) {
-                historyByDate[date] = {
+            if (!historyByDate[key]) {
+                historyByDate[key] = {
                     aggregated: {
+                        key,
                         date,
                         amount: 0,
                         amountUnit: 'ml',
@@ -43,7 +46,7 @@ export const aggregatedHistory = (records, get_abv) => {
                     records: [],
                 }
             }
-            const {aggregated, records} = historyByDate[date]
+            const {aggregated, records} = historyByDate[key]
 
             // aggregated.amount += ml(record.amount, record.amountUnit)
             aggregated.amount += alc(

@@ -1,4 +1,4 @@
-// import { check } from 'meteor/check'
+import { Settings } from '/imports/api/settings/collection'
 
 import { History } from './collection'
 import { userAuthorizedMethods } from '/utils/meteor/methods'
@@ -6,11 +6,6 @@ import { userAuthorizedMethods } from '/utils/meteor/methods'
 
 Meteor.methods(userAuthorizedMethods({
     'history.insert'(model) {
-        // check(text, String)
-        //
-        // if (!this.userId) {
-        //     throw new Meteor.Error('Not authorized.')
-        // }
         console.log('history.insert?', model, this.userId)
 
         History.insert({
@@ -19,13 +14,20 @@ Meteor.methods(userAuthorizedMethods({
         })
     },
 
-    // 'drinks.remove'(taskId) {
-    //     // check(taskId, String)
-    //     //
-    //     // if (!this.userId) {
-    //     //     throw new Meteor.Error('Not authorized.')
-    //     // }
+    'history.addUsualBeverage'({ name, numberOfDrinks }) {
+        const userId = this.userId
+        console.log('history.addUsualBeverage?', name, numberOfDrinks, userId)
+        const settings = Settings.findOne({ userId })
+        const beverage = settings.beverages.find(
+            beverage => beverage.name === name
+        )
 
-    //     History.remove(taskId)
-    // },
+        History.insert({
+            userId,
+            name,
+            amount: numberOfDrinks * beverage.usualAmount,
+            amountUnit: beverage.usualAmountUnit,
+            createdAt: new Date(),
+        })
+    },
 }))

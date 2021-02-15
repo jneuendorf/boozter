@@ -3,8 +3,6 @@ import * as React from 'react'
 // import { Meteor } from 'meteor/meteor'
 import { Form, Input, Button } from 'antd'
 
-import * as Routes from '../../routes'
-
 
 const tailLayout = {
     wrapperCol: {
@@ -13,7 +11,7 @@ const tailLayout = {
     }
 }
 
-export const LoginForm = (props) => {
+export const LoginForm = props => {
     const [username, setUsername] = React.useState('')
     const [password, setPassword] = React.useState('')
     // const history = useHistory()
@@ -22,7 +20,6 @@ export const LoginForm = (props) => {
         console.log('Success:', values)
         console.log()
         Meteor.loginWithPassword(username, password)
-        // history.push(Routes.HOME)
     }
 
     return <Form layout="horizontal" name="basic" onFinish={onFinish}>

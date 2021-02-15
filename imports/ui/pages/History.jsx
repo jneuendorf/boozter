@@ -19,10 +19,11 @@ const COLUMNS_TOP_LEVEL = [
     {
         title: 'Date',
         key: 'createdAt',
-        render(text, record, index) {
-            return DATETIME_FORMAT.format(record.createdAt)
+        render(text, { aggregated }, index) {
+            return DATETIME_FORMAT.format(aggregated.date)
         }
     },
+    // TODO: calories
 ]
 const COLUMNS_SECOND_LEVEL = [
     {
@@ -58,7 +59,10 @@ export const History = (props) => {
         )
         return {
             isLoading: false,
-            history: aggregatedHistory(history, ({ name }) => abvByBeverage[name]),
+            history: aggregatedHistory(
+                history,
+                ({ name }) => abvByBeverage[name],
+            ),
         }
     })
     console.log(history, isLoading)
