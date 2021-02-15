@@ -15,13 +15,13 @@ const ALC_MAX_DAYS = 120
 Settings.schema = new SimpleSchema({
     userId: String,
 
-    colors: {
-        type: Array,
-        minCount: 2,
-        maxCount: 5,
-        defaultValue: [ 'blue', 'green', 'red' ],
-    },
-    'colors.$': String,
+    // colors: {
+    //     type: Array,
+    //     minCount: 2,
+    //     maxCount: 5,
+    //     defaultValue: [ 'blue', 'green', 'red' ],
+    // },
+    // 'colors.$': String,
 
     alc: {
         type: Object,

@@ -1,0 +1,146 @@
+{
+    "Absinthe": {
+        "cal": 348
+    },
+    "Advocaat": {
+        "cal": 283
+    },
+    "Amaretto": {
+        "cal": 310
+    },
+    "Applejack": {
+        "cal": 233
+    },
+    "Asti": {
+        "cal": 138
+    },
+    "Baileys Irish Cream": {
+        "cal": 327
+    },
+    "Baileys": {
+        "cal": 327
+    },
+    "Beer": {
+        "cal": 43
+    },
+    "Blue Curacao": {
+        "cal": 243
+    },
+    "Bourbon": {
+        "cal": 233
+    },
+    "Brandy": {
+        "cal": 213
+    },
+    "Canadian Whiskey": {
+        "cal": 216
+    },
+    "Chambord": {
+        "cal": 348
+    },
+    "Champagne": {
+        "cal": 75
+    },
+    "Cider": {
+        "cal": 49
+    },
+    "Cognac": {
+        "cal": 235
+    },
+    "Cointreau": {
+        "cal": 320
+    },
+    "Drambuie": {
+        "cal": 358
+    },
+    "Frangelico": {
+        "cal": 238
+    },
+    "Gin": {
+        "cal": 263
+    },
+    "Glenfiddich": {
+        "cal": 230
+    },
+    "Grand Marnier": {
+        "cal": 253
+    },
+    "Irish Whiskey": {
+        "cal": 233
+    },
+    "Jack Daniel’s": {
+        "cal": 146
+    },
+    "Jagermeister": {
+        "cal": 250
+    },
+    "Jim Beam": {
+        "cal": 222
+    },
+    "Kahlua": {
+        "cal": 180
+    },
+    "Liqueur": {
+        "cal": 250
+    },
+    "Liquor": {
+        "cal": 250
+    },
+    "Midori": {
+        "cal": 267
+    },
+    "Prosecco": {
+        "cal": 66
+    },
+    "Punch": {
+        "cal": 62
+    },
+    "Red Wine": {
+        "cal": 85
+    },
+    "Rose Wine": {
+        "cal": 71
+    },
+    "Rum": {
+        "cal": 231
+    },
+    "Sambuca": {
+        "cal": 333
+    },
+    "Sangria": {
+        "cal": 96
+    },
+    "Scotch": {
+        "cal": 222
+    },
+    "Sherry": {
+        "cal": 116
+    },
+    "Sloe Gin": {
+        "cal": 332
+    },
+    "Southern Comfort": {
+        "cal": 247
+    },
+    "Tequila": {
+        "cal": 110
+    },
+    "Triple Sec": {
+        "cal": 153
+    },
+    "Vermouth": {
+        "cal": 130
+    },
+    "Vodka": {
+        "cal": 231
+    },
+    "Whisky": {
+        "cal": 250
+    },
+    "White Wine": {
+        "cal": 82
+    },
+    "Wine": {
+        "cal": 83
+    }
+}
