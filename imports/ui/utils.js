@@ -1,4 +1,5 @@
-import { ALLOWED_AMOUNT_UNITS } from '/imports/api/common.js'
+import { ALLOWED_AMOUNT_UNITS } from '/imports/api/common'
+import BeverageData from '/imports/api/beverages.json'
 
 
 export const ml = (amount, unit) => {
@@ -15,6 +16,11 @@ export const ml = (amount, unit) => {
     }
 }
 
+/**
+ * @param {number} amount
+ * @param {string} unit
+ * @param {number} abv
+ */
 export const alc = (amount, unit, abv) => {
     return ml(amount, unit) * abv / 100
 }
@@ -27,8 +33,11 @@ export const alc = (amount, unit, abv) => {
  * @param {{name: string, amount: number, amountUnit: string, createdAt: Date}[]} records
  * @returns {{aggregated: {date: string, amount: number, amountUnit: number}, records: []}}
  */
-export const aggregatedHistory = (records, get_abv) => {
+export const aggregatedHistory = (records, settings) => {
     const DATETIME_FORMAT = new Intl.DateTimeFormat(undefined, { dateStyle: 'short' })
+    const BEVERAGE_DICT = Object.fromEntries(
+        settings.beverages.map(({ name, ...data }) => [name, data])
+    )
 
     return Object.values(records.reduce(
         (historyByDate, record) => {
@@ -42,17 +51,22 @@ export const aggregatedHistory = (records, get_abv) => {
                         date,
                         amount: 0,
                         amountUnit: 'ml',
+                        calories: 0,
                     },
                     records: [],
                 }
             }
             const {aggregated, records} = historyByDate[key]
 
-            // aggregated.amount += ml(record.amount, record.amountUnit)
+            const beverage = BEVERAGE_DICT[record.name]
             aggregated.amount += alc(
                 record.amount,
                 record.amountUnit,
-                get_abv(record),
+                beverage.abv,
+            )
+            aggregated.calories += (
+                ml(record.amount, record.amountUnit)
+                * beverage.calories / 100
             )
             records.push(record)
 

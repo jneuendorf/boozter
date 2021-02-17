@@ -1,29 +1,40 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
-import { Layout, Spin, Table } from 'antd'
+import { Spin, Table } from 'antd'
+import memoize from 'lodash.memoize'
 
 import { History as HistoryCollection } from '/imports/api/history/collection'
 import { Settings as SettingsCollection } from '/imports/api/settings/collection'
 import { aggregatedHistory } from '/imports/ui/utils'
+import * as Breakpoints from '../breakpoints'
 
 
-const DATETIME_FORMAT = new Intl.DateTimeFormat(undefined, { dateStyle: 'short' })
+const DATETIME_FORMAT = new Intl.DateTimeFormat(
+    undefined,
+    { dateStyle: 'short' },
+)
 const COLUMNS_TOP_LEVEL = [
     {
-        title: 'Alcolhol',
+        title: 'Pure Alcolhol (ml)',
         key: 'alcohol',
         render(text, { aggregated }, index) {
-            return `${aggregated.amount} ${aggregated.amountUnit}`
-        }
+            return aggregated.amount.toFixed(2)
+        },
+    },
+    {
+        title: 'Calories',
+        key: 'cal',
+        render(text, { aggregated }, index) {
+            return Math.round(aggregated.calories)
+        },
     },
     {
         title: 'Date',
         key: 'createdAt',
         render(text, { aggregated }, index) {
             return DATETIME_FORMAT.format(aggregated.date)
-        }
+        },
     },
-    // TODO: calories
 ]
 const COLUMNS_SECOND_LEVEL = [
     {
@@ -40,6 +51,33 @@ const COLUMNS_SECOND_LEVEL = [
 ]
 
 
+const topLevelRowKey = ({ aggregated }) => aggregated.date
+
+
+const nestedTable = memoize(size => ({ records }, index, indent, expanded) => (
+    <Table
+        dataSource={records}
+        columns={COLUMNS_SECOND_LEVEL}
+        rowKey='_id'
+        size={size}
+        pagination={false}
+    />
+))
+
+
+const HistoryTable = ({ size, expandRowByClick, ...props }) => <Table
+    bordered
+    columns={COLUMNS_TOP_LEVEL}
+    rowKey={topLevelRowKey}
+    size={size}
+    expandable={{
+        expandRowByClick,
+        expandedRowRender: nestedTable(size),
+    }}
+    {...props}
+/>
+
+
 export const History = (props) => {
     const { isLoading, history } = useTracker(() => {
         const user = Meteor.user()
@@ -54,32 +92,30 @@ export const History = (props) => {
         const userId = user._id
         const settings = SettingsCollection.findOne({ userId })
         const history = HistoryCollection.find({ userId }).fetch()
-        const abvByBeverage = Object.fromEntries(
-            settings.beverages.map(({ name, abv }) => [name, abv])
-        )
         return {
             isLoading: false,
-            history: aggregatedHistory(
-                history,
-                ({ name }) => abvByBeverage[name],
-            ),
+            history: aggregatedHistory(history, settings),
         }
     })
     console.log(history, isLoading)
 
-    return <Layout>
+    return <Fragment>
         <Spin spinning={isLoading} tip='Loading...'>
-            <Table
-                bordered
-                dataSource={history}
-                columns={COLUMNS_TOP_LEVEL}
-                rowKey={({ aggregated }) => aggregated.date}
-                expandable={{
-                    expandedRowRender({ records }, index, indent, expanded) {
-                        return <Table columns={COLUMNS_SECOND_LEVEL} dataSource={records} pagination={false} />
-                    },
-                }}
-            />
+            <Breakpoints.Desktop>
+                <HistoryTable
+                    dataSource={history}
+                    expandRowByClick={false}
+                    size='middle'
+                />
+            </Breakpoints.Desktop>
+
+            <Breakpoints.TabletOrMobile>
+                <HistoryTable
+                    dataSource={history}
+                    expandRowByClick={true}
+                    size='small'
+                />
+            </Breakpoints.TabletOrMobile>
         </Spin>
-    </Layout>
+    </Fragment>
 }

@@ -15,6 +15,7 @@
         "antd-mobile": "^2.3.4",
         "bcrypt": "^5.0.0",
         "indexof": "0.0.1",
+        "lodash.memoize": "^4.1.2",
         "meteor-node-stubs": "^1.0.1",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",
