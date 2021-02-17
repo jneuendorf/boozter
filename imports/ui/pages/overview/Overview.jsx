@@ -194,12 +194,6 @@ export const Overview = () => {
                         }
                         onClick={toggleForm}
                         size='small'
-                    // style={{
-                    //     position: 'absolute',
-                    //     bottom: '10px',
-                    //     left: '15px',
-                    //     right: '15px',
-                    // }}
                     >
                         {
                             isSimpleForm
