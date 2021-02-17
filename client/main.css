@@ -13,3 +13,13 @@ body {
         height: 100%;
     }
 }
+
+.wrapper {
+    margin: 0;
+}
+.wrapper-desktop {
+    padding: 15px;
+}
+.wrapper-mobile {
+    padding: 15px;
+}
