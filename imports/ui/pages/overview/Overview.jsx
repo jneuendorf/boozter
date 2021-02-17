@@ -1,13 +1,14 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useCallback, useState } from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
-import { Flex } from 'antd-mobile'
+import { Button as MobileButton } from 'antd-mobile'
 import { Line } from '@ant-design/charts'
-import { Button } from 'antd'
+import { Empty } from 'antd'
 
 import { History as HistoryCollection } from '/imports/api/history/collection'
 import { Settings as SettingsCollection } from '/imports/api/settings/collection'
 import { aggregatedHistory } from '/imports/ui/utils'
 import * as Breakpoints from '../../breakpoints'
+import { Wrapper } from '../../Wrapper'
 import {
     SimpleBeverageForm,
     schema as simpleSchema
@@ -16,6 +17,7 @@ import {
     ComplexBeverageForm,
     schema as complexSchema,
 } from './ComplexBeverageForm'
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
 
 
 const config = {
@@ -100,17 +102,10 @@ export const Overview = () => {
         else {
             console.log('settings', settings)
             const beverages = [...settings.beverages].sort((a, b) => b.isFavorite - a.isFavorite)
-            const abvByBeverage = Object.fromEntries(
-                settings.beverages.map(({ name, abv }) => [name, abv])
-            )
-            console.log(aggregatedHistory(
-                HistoryCollection.find({ userId }).fetch(),
-                ({ name }) => abvByBeverage[name],
-            ))
             const history = (
                 aggregatedHistory(
                     HistoryCollection.find({ userId }).fetch(),
-                    ({ name }) => abvByBeverage[name],
+                    settings,
                 )
                     .map(({ aggregated: { date, amount } }) => ({
                         x: date,
@@ -146,17 +141,10 @@ export const Overview = () => {
     })
 
     console.log('model', history)
-    console.log(
-        HistoryCollection.schema
-            .pick('name')
-            .extend({
-                numberOfDrinks: {
-                    type: Number,
-                    min: 1,
-                    defaultValue: 1,
-                },
-            })
-            .clean({})
+
+    const toggleForm = useCallback(
+        () => setIsSimpleForm(!isSimpleForm),
+        [setIsSimpleForm, isSimpleForm],
     )
 
 
@@ -166,31 +154,61 @@ export const Overview = () => {
         </Breakpoints.Desktop>
 
         <Breakpoints.TabletOrMobile>
-            {
-                history.length
-                    ? <Flex>
-                        <Line {...config} data={history} />
-                    </Flex>
-                    : null
-            }
-            <Flex>
-                <Button onClick={() => setIsSimpleForm(!isSimpleForm)}>toggle</Button>
-            </Flex>
-            <Flex>
-                {
-                    isSimpleForm
-                        ? <SimpleBeverageForm
-                            model={model}
-                            disabled={isLoading}
-                            beverages={beverages}
-                        />
-                        : <ComplexBeverageForm
-                            model={model}
-                            disabled={isLoading}
-                            beverages={beverages}
-                        />
-                }
-            </Flex>
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr',
+                gridTemplateRows: 'auto 1fr auto',
+                gridTemplateAreas: '"chart" "form" "button"',
+                height: 'calc(100vh - 50px)',
+            }}>
+                <div style={{gridArea: 'chart'}}>
+                    {
+                        history.length
+                            ? <Line {...config} data={history} />
+                            : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                    }
+                </div>
+
+                <Wrapper style={{gridArea: 'form', overflow: 'auto'}}>
+                    {
+                        isSimpleForm
+                            ? <SimpleBeverageForm
+                                model={model}
+                                disabled={isLoading}
+                                beverages={beverages}
+                            />
+                            : <ComplexBeverageForm
+                                model={model}
+                                disabled={isLoading}
+                                beverages={beverages}
+                            />
+                    }
+                </Wrapper>
+
+                <Wrapper style={{gridArea: 'button'}}>
+                    <MobileButton
+                        icon={
+                            isSimpleForm
+                                ? <PlusCircleOutlined />
+                                : <MinusCircleOutlined />
+                        }
+                        onClick={toggleForm}
+                        size='small'
+                    // style={{
+                    //     position: 'absolute',
+                    //     bottom: '10px',
+                    //     left: '15px',
+                    //     right: '15px',
+                    // }}
+                    >
+                        {
+                            isSimpleForm
+                                ? 'more details'
+                                : 'less details'
+                        }
+                    </MobileButton>
+                </Wrapper>
+            </div>
         </Breakpoints.TabletOrMobile>
     </Fragment>
 }
