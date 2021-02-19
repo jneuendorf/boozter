@@ -1,5 +1,4 @@
 import { ALLOWED_AMOUNT_UNITS } from '/imports/api/common'
-import BeverageData from '/imports/api/beverages.json'
 
 
 export const ml = (amount, unit) => {
@@ -49,8 +48,8 @@ export const aggregatedHistory = (records, settings) => {
                     aggregated: {
                         key,
                         date,
-                        amount: 0,
-                        amountUnit: 'ml',
+                        alcAmount: 0,
+                        alcAmountUnit: 'ml',
                         calories: 0,
                     },
                     records: [],
@@ -59,15 +58,23 @@ export const aggregatedHistory = (records, settings) => {
             const {aggregated, records} = historyByDate[key]
 
             const beverage = BEVERAGE_DICT[record.name]
-            aggregated.amount += alc(
-                record.amount,
-                record.amountUnit,
-                beverage.abv,
-            )
-            aggregated.calories += (
-                ml(record.amount, record.amountUnit)
-                * beverage.calories / 100
-            )
+            if (beverage) {
+                aggregated.alcAmount += alc(
+                    record.amount,
+                    record.amountUnit,
+                    beverage.abv,
+                )
+                aggregated.calories += (
+                    ml(record.amount, record.amountUnit)
+                    * beverage.calories / 100
+                )
+            }
+            // Setting may change over time, thus records from the history
+            // might refer to no longer existing`settings.beverages`.
+            else {
+                aggregated.alcAmount = NaN
+                aggregated.calories = NaN
+            }
             records.push(record)
 
             // const recordAmount = ml(record.amount, record.amountUnit)

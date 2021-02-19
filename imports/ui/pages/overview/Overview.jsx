@@ -1,8 +1,7 @@
 import React, { Fragment, useCallback, useState } from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
 import { Button as MobileButton } from 'antd-mobile'
-import { Line } from '@ant-design/charts'
-import { Empty } from 'antd'
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
 
 import { History as HistoryCollection } from '/imports/api/history/collection'
 import { Settings as SettingsCollection } from '/imports/api/settings/collection'
@@ -17,54 +16,7 @@ import {
     ComplexBeverageForm,
     schema as complexSchema,
 } from './ComplexBeverageForm'
-import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
-
-
-const config = {
-    autoFit: true,
-    height: 100,
-    padding: [20, 20, 20, 0],
-    xAxis: false,
-    xField: 'x',
-    yAxis: false,
-    yField: 'y',
-    smooth: true,
-    connectNulls: true,
-    animate: {
-        appear: {
-            animation: 'path-in',
-            duration: 500,
-        },
-    },
-    annotations: [
-        {
-            type: 'line',
-            start: ['min', 'median'],
-            end: ['max', 'median'],
-            style: {
-                stroke: '#F4664A',
-                // lineDash : [2 , 2],
-            },
-        },
-    ],
-    tooltip: {
-        fields: ['x', 'y'],
-        showTitle: false,
-        formatter: (datum) => ({
-            name: datum.x.toLocaleString(undefined, { dateStyle: "short" }),
-            value: datum.y,
-        }),
-    },
-    // point: {
-    //     size: 5,
-    //     shape: 'diamond',
-    // },
-    // label: {
-    //     style: {
-    //         fill: '#aaa',
-    //     },
-    // },
-}
+import { Chart } from './Chart'
 
 
 const ERROR_NO_SETTINGS = 'No settings'
@@ -78,6 +30,7 @@ export const Overview = () => {
         history = [],
         model,
         beverages = [],
+        alcMax,
     } = useTracker(() => {
         const user = Meteor.user()
         if (
@@ -101,20 +54,24 @@ export const Overview = () => {
         }
         else {
             console.log('settings', settings)
-            const beverages = [...settings.beverages].sort((a, b) => b.isFavorite - a.isFavorite)
+            const { beverages, alcMax } = settings
+            const sortedBeverages = [...beverages].sort(
+                (a, b) => b.isFavorite - a.isFavorite
+            )
+            // TODO: use `settings.alcMaxDays` to limit data
             const history = (
                 aggregatedHistory(
                     HistoryCollection.find({ userId }).fetch(),
                     settings,
                 )
-                    .map(({ aggregated: { date, amount } }) => ({
+                    .map(({ aggregated: { date, alcAmount } }) => ({
                         x: date,
-                        y: amount,
+                        y: alcAmount,
                     }))
                     .sort((a, b) => a.x - b.x)
             )
             console.log('history', history)
-            const initialBeverage = beverages[0]
+            const initialBeverage = sortedBeverages[0]
             const model = (
                 isSimpleForm
                     ? {
@@ -134,7 +91,8 @@ export const Overview = () => {
                 isLoading: false,
                 history,
                 model,
-                beverages,
+                beverages: sortedBeverages,
+                alcMax,
             }
         }
 
@@ -162,13 +120,11 @@ export const Overview = () => {
                 height: 'calc(100vh - 50px)',
             }}>
                 <div style={{gridArea: 'chart'}}>
-                    {
-                        history.length
-                            ? <Line {...config} data={history} />
-                            : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                    }
+                    <Chart
+                        data={history}
+                        annotationValue={alcMax}
+                    />
                 </div>
-
                 <Wrapper style={{gridArea: 'form', overflow: 'auto'}}>
                     {
                         isSimpleForm
@@ -184,7 +140,6 @@ export const Overview = () => {
                             />
                     }
                 </Wrapper>
-
                 <Wrapper style={{gridArea: 'button'}}>
                     <MobileButton
                         icon={

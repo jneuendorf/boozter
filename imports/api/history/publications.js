@@ -8,7 +8,7 @@ Meteor.publish('history', function () {
         {
             userId: this.userId,
             createdAt: {
-                // TODO: Use settings.alc.maxDays instead 120
+                // TODO: Use settings.alcMaxDays instead 120
                 $gte: new Date(Date.now() - 120 * (1000 * 60 * 60 * 24)),
             },
         },

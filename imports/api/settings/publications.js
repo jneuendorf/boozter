@@ -4,5 +4,13 @@ import { Settings } from './collection'
 
 
 Meteor.publish('settings', function publishSettings() {
-    return Settings.find({ userId: this.userId })
+    const userId = this.userId
+    const settings = Settings.findOne({ userId })
+    if (settings === undefined) {
+        Settings.insert({
+            ...Settings.schema.clean({}),
+            userId,
+        })
+    }
+    return Settings.find({ userId })
 })

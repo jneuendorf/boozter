@@ -15,17 +15,21 @@ const DATETIME_FORMAT = new Intl.DateTimeFormat(
 )
 const COLUMNS_TOP_LEVEL = [
     {
-        title: 'Pure Alcolhol (ml)',
+        title: 'Pure Alcolhol',
         key: 'alcohol',
-        render(text, { aggregated }, index) {
-            return aggregated.amount.toFixed(2)
+        render(text, { aggregated: { alcAmount, alcAmountUnit } }, index) {
+            return Number.isNaN(alcAmount)
+                ? '?'
+                : `${alcAmount.toFixed(2)} ${alcAmountUnit}`
         },
     },
     {
         title: 'Calories',
         key: 'cal',
         render(text, { aggregated }, index) {
-            return Math.round(aggregated.calories)
+            return Number.isNaN(aggregated.calories)
+                ? '?'
+                : Math.round(aggregated.calories)
         },
     },
     {

@@ -2,13 +2,19 @@ import { Mongo } from 'meteor/mongo'
 import SimpleSchema from 'simpl-schema'
 import { SimpleSchema2Bridge } from 'uniforms-bridge-simple-schema-2'
 
+import BeverageData from '/imports/api/beverages.json'
+import { alc } from '/imports/ui/utils'
 import { ALLOWED_AMOUNT_UNITS } from '../common'
 
 
 export const Settings = new Mongo.Collection('settings')
 
 
-const ALC_MAX = 5 * 5 / 7
+const BEER = 'Beer'
+const BEER_ABV = 4.9
+// WHO maximum is 1 beer a day, 5 days a week. Assuming 4.9% alc/vol
+const ALC_MAX = 5 * alc(500, 'ml', BEER_ABV) / 7
+// const ALC_MAX = 5 * BEER_ABV / 7
 const ALC_MAX_DAYS = 120
 
 
@@ -23,21 +29,12 @@ Settings.schema = new SimpleSchema({
     // },
     // 'colors.$': String,
 
-    alc: {
-        type: Object,
-        // This is necessary for `schema.clean()` to generate this nested object
-        defaultValue: {
-            max: ALC_MAX,
-            maxDays: ALC_MAX_DAYS,
-        },
-    },
-    // WHO maximum is 1 beer a day, 5 days a week. Assuming 5% alc/vol
-    'alc.max': {
+    alcMax: {
         type: Number,
         label: 'Maximum ABV per day',
         defaultValue: ALC_MAX,
     },
-    'alc.maxDays': {
+    alcMaxDays: {
         type: SimpleSchema.Integer,
         min: 7,
         label: 'Number of past days relevant for the average',
@@ -49,12 +46,10 @@ Settings.schema = new SimpleSchema({
         minCount: 1,
         defaultValue: [
             {
-                name: 'Beer (default)',
+                name: BEER,
                 isFavorite: false,
-                // Average without alc free according to
-                // https://www.kalorientabelle.net/kalorien/bier
-                calories: 44,
-                abv: 4.9,
+                calories: BeverageData[BEER].calories,
+                abv: BEER_ABV,
                 usualAmount: 500,
                 usualAmountUnit: 'ml'
             },
