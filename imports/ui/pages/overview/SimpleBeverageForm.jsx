@@ -19,7 +19,7 @@ export const schema = HistoryCollection.schema
 const bridge = new SimpleSchema2Bridge(schema)
 
 
-const handleSubmit = (model) => {
+const addUsualBeverage = (model) => {
     console.log('history.addUsualBeverage?', model)
     Meteor.call('history.addUsualBeverage', model)
 }
@@ -30,7 +30,7 @@ export const SimpleBeverageForm = ({ disabled, model, beverages }) => (
         schema={bridge}
         model={model}
         disabled={disabled}
-        onSubmit={handleSubmit}
+        onSubmit={addUsualBeverage}
     >
         <AutoField name='numberOfDrinks' />
         <SelectField
