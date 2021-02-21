@@ -8,6 +8,7 @@ import { Settings as SettingsCollection } from '/imports/api/settings/collection
 import { aggregatedHistory } from '/imports/ui/utils'
 import * as Breakpoints from '../../breakpoints'
 import { Wrapper } from '../../Wrapper'
+import { Mobile } from '../Layout'
 import {
     SimpleBeverageForm,
     schema as simpleSchema
@@ -53,7 +54,7 @@ export const Overview = () => {
             }
         }
         else {
-            console.log('settings', settings)
+            // console.log('settings', settings)
             const { beverages, alcMax } = settings
             const sortedBeverages = [...beverages].sort(
                 (a, b) => b.isFavorite - a.isFavorite
@@ -70,7 +71,7 @@ export const Overview = () => {
                     }))
                     .sort((a, b) => a.x - b.x)
             )
-            console.log('history', history)
+            // console.log('history', history)
             const initialBeverage = sortedBeverages[0]
             const model = (
                 isSimpleForm
@@ -98,7 +99,7 @@ export const Overview = () => {
 
     })
 
-    console.log('model', history)
+    // console.log('model', history)
 
     const toggleForm = useCallback(
         () => setIsSimpleForm(!isSimpleForm),
@@ -112,52 +113,50 @@ export const Overview = () => {
         </Breakpoints.Desktop>
 
         <Breakpoints.TabletOrMobile>
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr',
-                gridTemplateRows: 'auto 1fr auto',
-                gridTemplateAreas: '"chart" "form" "button"',
-                height: 'calc(100vh - 50px)',
-            }}>
-                <div style={{gridArea: 'chart'}}>
+            <Mobile.Layout>
+                <Mobile.Header>
                     <Chart
                         data={history}
                         annotationValue={alcMax}
                     />
-                </div>
-                <Wrapper style={{gridArea: 'form', overflow: 'auto'}}>
-                    {
-                        isSimpleForm
-                            ? <SimpleBeverageForm
-                                model={model}
-                                disabled={isLoading}
-                                beverages={beverages}
-                            />
-                            : <ComplexBeverageForm
-                                model={model}
-                                disabled={isLoading}
-                                beverages={beverages}
-                            />
-                    }
-                </Wrapper>
-                <Wrapper style={{gridArea: 'button'}}>
-                    <MobileButton
-                        icon={
-                            isSimpleForm
-                                ? <PlusCircleOutlined />
-                                : <MinusCircleOutlined />
-                        }
-                        onClick={toggleForm}
-                        size='small'
-                    >
+                </Mobile.Header>
+                <Mobile.Content>
+                    <Wrapper>
                         {
                             isSimpleForm
-                                ? 'more details'
-                                : 'less details'
+                                ? <SimpleBeverageForm
+                                    model={model}
+                                    disabled={isLoading}
+                                    beverages={beverages}
+                                />
+                                : <ComplexBeverageForm
+                                    model={model}
+                                    disabled={isLoading}
+                                    beverages={beverages}
+                                />
                         }
-                    </MobileButton>
-                </Wrapper>
-            </div>
+                    </Wrapper>
+                </Mobile.Content>
+                <Mobile.Footer>
+                    <Wrapper>
+                        <MobileButton
+                            icon={
+                                isSimpleForm
+                                    ? <PlusCircleOutlined />
+                                    : <MinusCircleOutlined />
+                            }
+                            onClick={toggleForm}
+                            size='small'
+                        >
+                            {
+                                isSimpleForm
+                                    ? 'more details'
+                                    : 'less details'
+                            }
+                        </MobileButton>
+                    </Wrapper>
+                </Mobile.Footer>
+            </Mobile.Layout>
         </Breakpoints.TabletOrMobile>
     </Fragment>
 }
