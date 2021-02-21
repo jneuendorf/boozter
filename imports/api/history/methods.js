@@ -30,4 +30,10 @@ Meteor.methods(userAuthorizedMethods({
             createdAt: new Date(),
         })
     },
+
+    'history.removeMany'(ids) {
+        History.remove({
+            _id: { $in: ids },
+        })
+    },
 }))

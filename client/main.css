@@ -22,3 +22,12 @@ body {
 .wrapper-mobile {
     padding: 15px;
 }
+
+
+/* history */
+.wrapper.history--buttons {
+    text-align: center;
+}
+.wrapper.history--buttons .am-button + .am-button {
+    margin-left: 10px;
+}
