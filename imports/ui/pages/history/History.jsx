@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
 import { Spin } from 'antd'
 
@@ -30,15 +30,13 @@ export const History = (props) => {
         }
     })
 
-    return <Fragment>
-        <Spin spinning={isLoading} tip='Loading...'>
-            <Breakpoints.Desktop>
-                <DesktopHistory history={history} />
-            </Breakpoints.Desktop>
+    return <Spin spinning={isLoading} tip='Loading...'>
+        <Breakpoints.Desktop>
+            <DesktopHistory history={history} />
+        </Breakpoints.Desktop>
 
-            <Breakpoints.TabletOrMobile>
-                <MobileHistory history={history} />
-            </Breakpoints.TabletOrMobile>
-        </Spin>
-    </Fragment>
+        <Breakpoints.TabletOrMobile>
+            <MobileHistory history={history} />
+        </Breakpoints.TabletOrMobile>
+    </Spin>
 }

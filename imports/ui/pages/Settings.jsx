@@ -6,10 +6,9 @@ import { Layout, Spin } from 'antd'
 import {
     Settings as SettingsCollection,
     bridge as schema,
- } from '/imports/api/settings/collection'
-
-
-const { Header, Footer, Sider, Content } = Layout
+} from '/imports/api/settings/collection'
+import * as Breakpoints from '../breakpoints'
+import { Wrapper } from '../Wrapper'
 
 
 export const Settings = (props) => {
@@ -35,7 +34,6 @@ export const Settings = (props) => {
         }
     })
     const handleSubmit = useCallback(
-        // TODO: Use `model` for upsert
         (model) => {
             Meteor.call('settings.upsert', userId, model)
         },
@@ -44,8 +42,8 @@ export const Settings = (props) => {
 
     console.log(settings)
 
-    return <Layout>
-        <Spin spinning={isLoading} tip='Loading...'>
+    return <Spin spinning={isLoading} tip='Loading...'>
+        <Breakpoints.Desktop>
             <AutoForm
                 schema={schema}
                 model={settings}
@@ -56,6 +54,22 @@ export const Settings = (props) => {
                 <ErrorsField />
                 <SubmitField />
             </AutoForm>
-        </Spin>
-    </Layout>
+        </Breakpoints.Desktop>
+
+        <Breakpoints.TabletOrMobile>
+            <Wrapper>
+                <AutoForm
+                    schema={schema}
+                    model={settings}
+                    disabled={isLoading}
+                    onSubmit={handleSubmit}
+                >
+                    <AutoFields omitFields={['userId']} />
+                    <ErrorsField />
+                    <SubmitField />
+                </AutoForm>
+            </Wrapper>
+        </Breakpoints.TabletOrMobile>
+
+    </Spin>
 }
