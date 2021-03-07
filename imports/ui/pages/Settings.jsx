@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
-import { AutoFields, AutoForm, ErrorsField, SubmitField } from 'uniforms-antd'
-import { Layout, Spin } from 'antd'
+import { AutoFields, AutoForm, ErrorsField, ListField, SubmitField } from 'uniforms-antd'
+import { Spin } from 'antd'
+import { Accordion } from 'antd-mobile'
+import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2'
 
 import {
     Settings as SettingsCollection,
@@ -9,6 +11,12 @@ import {
 } from '/imports/api/settings/collection'
 import * as Breakpoints from '../breakpoints'
 import { Wrapper } from '../Wrapper'
+
+
+const alcSchema = SettingsCollection.schema.pick('alcMax', 'alcMaxDays')
+const alcBridge = new SimpleSchema2Bridge(alcSchema)
+const beveragesSchema = SettingsCollection.schema.pick('beverages')
+const beveragesBridge = new SimpleSchema2Bridge(beveragesSchema)
 
 
 export const Settings = (props) => {
@@ -57,18 +65,42 @@ export const Settings = (props) => {
         </Breakpoints.Desktop>
 
         <Breakpoints.TabletOrMobile>
-            <Wrapper>
-                <AutoForm
-                    schema={schema}
-                    model={settings}
-                    disabled={isLoading}
-                    onSubmit={handleSubmit}
-                >
-                    <AutoFields omitFields={['userId']} />
-                    <ErrorsField />
-                    <SubmitField />
-                </AutoForm>
-            </Wrapper>
+            <Accordion
+                defaultActiveKey={['beverages', 'alc']}
+                className='settings--accordion'
+            >
+                <Accordion.Panel key='beverages' header='Beverages'>
+                    <Wrapper>
+                        <AutoForm
+                            schema={beveragesBridge}
+                            model={settings}
+                            disabled={isLoading}
+                            onSubmit={handleSubmit}
+                        >
+                            <ListField
+                                label={null}
+                                name='beverages'
+                            />
+                            <ErrorsField />
+                            <SubmitField value='Save' />
+                        </AutoForm>
+                    </Wrapper>
+                </Accordion.Panel>
+                <Accordion.Panel key='alc' header='Alcohol'>
+                    <Wrapper>
+                        <AutoForm
+                            schema={alcBridge}
+                            model={settings}
+                            disabled={isLoading}
+                            onSubmit={handleSubmit}
+                        >
+                            <AutoFields />
+                            <ErrorsField />
+                            <SubmitField value='Save' />
+                        </AutoForm>
+                    </Wrapper>
+                </Accordion.Panel>
+            </Accordion>
         </Breakpoints.TabletOrMobile>
 
     </Spin>

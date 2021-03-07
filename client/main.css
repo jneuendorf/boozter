@@ -31,3 +31,8 @@ body {
 .wrapper.history--buttons .am-button + .am-button {
     margin-left: 10px;
 }
+
+/* settings */
+.am-accordion.settings--accordion .am-accordion-item .am-accordion-content {
+    background-color: transparent;
+}

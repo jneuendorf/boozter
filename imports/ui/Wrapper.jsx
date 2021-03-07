@@ -3,7 +3,7 @@ import React, { Fragment } from 'react'
 import * as Breakpoints from './breakpoints'
 
 
-export const Wrapper = ({ children, className, style }) => {
+export const Wrapper = ({ children, className='', style }) => {
     return <Fragment>
         <Breakpoints.Desktop>
             <div
