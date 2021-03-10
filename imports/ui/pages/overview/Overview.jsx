@@ -21,6 +21,7 @@ import { Chart } from './Chart'
 
 
 const ERROR_NO_SETTINGS = 'No settings'
+const MS_PER_DAY = 1000 * 60 * 60 * 24
 
 
 export const Overview = () => {
@@ -36,7 +37,7 @@ export const Overview = () => {
         const user = Meteor.user()
         if (
             !user
-            || !Meteor.subscribe('history').ready()
+            || !Meteor.subscribe('history.recent').ready()
             || !Meteor.subscribe('settings').ready()
         ) {
             return { isLoading: true }
@@ -55,14 +56,23 @@ export const Overview = () => {
         }
         else {
             // console.log('settings', settings)
-            const { beverages, alcMax } = settings
+            const { beverages, alcMax, alcMaxDays } = settings
             const sortedBeverages = [...beverages].sort(
                 (a, b) => b.isFavorite - a.isFavorite
             )
-            // TODO: use `settings.alcMaxDays` to limit data
             const history = (
                 aggregatedHistory(
-                    HistoryCollection.find({ userId }).fetch(),
+                    HistoryCollection.find(
+                        {
+                            userId,
+                            createdAt: {
+                                $gte: new Date(Date.now() - alcMaxDays * MS_PER_DAY),
+                            },
+                        },
+                        {
+                            sort: { createdAt: -1 },
+                        },
+                    ).fetch(),
                     settings,
                 )
                     .map(({ aggregated: { date, alcAmount } }) => ({

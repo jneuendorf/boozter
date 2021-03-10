@@ -20,7 +20,7 @@ const beveragesBridge = new SimpleSchema2Bridge(beveragesSchema)
 
 
 export const Settings = (props) => {
-    const { isLoading, userId, settings} = useTracker(() => {
+    const { isLoading, userId, settings } = useTracker(() => {
         const user = Meteor.user()
         if (!user || !Meteor.subscribe('settings').ready()) {
             return { isLoading: true }
