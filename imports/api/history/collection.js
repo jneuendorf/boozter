@@ -17,6 +17,7 @@ History.schema = new SimpleSchema({
         allowedValues: ALLOWED_AMOUNT_UNITS,
         defaultValue: 'ml',
     },
+    // TODO: Normalize as UTCDate
     createdAt: Date,
 })
 

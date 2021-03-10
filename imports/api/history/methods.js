@@ -33,6 +33,7 @@ Meteor.methods(userAuthorizedMethods({
 
     'history.removeMany'(ids) {
         History.remove({
+            userId: this.userId,
             _id: { $in: ids },
         })
     },
