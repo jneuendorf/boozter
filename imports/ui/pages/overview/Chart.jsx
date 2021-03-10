@@ -56,10 +56,13 @@ const getChartProps = annotationValue => ({
 
 
 export const Chart = ({ data=[], annotationValue }) => (
-    data.length
+    data.length >= 2
         ? <Line
             data={data}
             {...getChartProps(annotationValue)}
         />
-        : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        : <Empty
+            description='Insufficient data'
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
 )
