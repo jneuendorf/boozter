@@ -11,6 +11,7 @@ Meteor.methods(userAuthorizedMethods({
         History.insert({
             createdAt: new Date(),
             ...model,
+            userId: this.userId,
         })
     },
 
