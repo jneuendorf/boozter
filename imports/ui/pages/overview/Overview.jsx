@@ -26,7 +26,11 @@ const MS_PER_DAY = 1000 * 60 * 60 * 24
 
 export const Overview = () => {
     const [isSimpleForm, setIsSimpleForm] = useState(true)
-    // TODO: Use `status` instead `isLoading`
+    const toggleForm = useCallback(
+        () => setIsSimpleForm(!isSimpleForm),
+        [setIsSimpleForm, isSimpleForm],
+    )
+
     const {
         isLoading,
         history = [],
@@ -46,77 +50,59 @@ export const Overview = () => {
         const userId = user._id
         const settings = SettingsCollection.findOne({ userId })
 
-        if (settings === undefined) {
-            return {
-                userId,
-                isLoading: false,
-                // TODO: Handle error
-                error: ERROR_NO_SETTINGS,
-            }
-        }
-        else {
-            // console.log('settings', settings)
-            const { beverages, alcMax, alcMaxDays } = settings
-            const sortedBeverages = [...beverages].sort(
-                (a, b) => b.isFavorite - a.isFavorite
-            )
-            const history = (
-                aggregatedHistory(
-                    HistoryCollection.find(
-                        {
-                            userId,
-                            createdAt: {
-                                $gte: new Date(Date.now() - alcMaxDays * MS_PER_DAY),
-                            },
+        // console.log('settings', settings)
+        const { beverages, alcMax, alcMaxDays } = settings
+        const sortedBeverages = [...beverages].sort(
+            (a, b) => b.isFavorite - a.isFavorite
+        )
+        const history = (
+            aggregatedHistory(
+                HistoryCollection.find(
+                    {
+                        userId,
+                        createdAt: {
+                            $gte: new Date(Date.now() - alcMaxDays * MS_PER_DAY),
                         },
-                        {
-                            sort: { createdAt: -1 },
-                        },
-                    ).fetch(),
-                    settings,
-                )
-                    .map(({ aggregated: { date, alcAmount } }) => ({
-                        x: date,
-                        y: alcAmount,
-                    }))
-                    .sort((a, b) => a.x - b.x)
+                    },
+                    {
+                        sort: { createdAt: -1 },
+                    },
+                ).fetch(),
+                settings,
             )
-            // console.log('history', history)
-            const initialBeverage = sortedBeverages[0]
-            const model = (
-                isSimpleForm
-                    ? {
-                        ...simpleSchema.clean({}),
-                        name: initialBeverage ? initialBeverage.name : undefined,
-                    }
-                    : {
-                        ...complexSchema.clean({}),
-                        name: initialBeverage ? initialBeverage.name : undefined,
-                        amount: initialBeverage.usualAmount,
-                        amountUnit: initialBeverage.usualAmountUnit,
-                        createdAt: new Date(),
-                    }
-            )
-            return {
-                userId,
-                isLoading: false,
-                history,
-                model,
-                beverages: sortedBeverages,
-                alcMax,
-            }
+                .map(({ aggregated: { date, alcAmount } }) => ({
+                    x: date,
+                    y: alcAmount,
+                }))
+                .sort((a, b) => a.x - b.x)
+        )
+        // console.log('history', history)
+        const initialBeverage = sortedBeverages[0]
+        const model = (
+            isSimpleForm
+                ? {
+                    ...simpleSchema.clean({}),
+                    name: initialBeverage ? initialBeverage.name : undefined,
+                }
+                : {
+                    ...complexSchema.clean({}),
+                    name: initialBeverage ? initialBeverage.name : undefined,
+                    amount: initialBeverage.usualAmount,
+                    amountUnit: initialBeverage.usualAmountUnit,
+                    createdAt: new Date(),
+                }
+        )
+        return {
+            userId,
+            isLoading: false,
+            history,
+            model,
+            beverages: sortedBeverages,
+            alcMax,
         }
-
     })
 
     // console.log('model', history)
-
-    const toggleForm = useCallback(
-        () => setIsSimpleForm(!isSimpleForm),
-        [setIsSimpleForm, isSimpleForm],
-    )
-
-
     return <Fragment>
         <Breakpoints.Desktop>
             1
