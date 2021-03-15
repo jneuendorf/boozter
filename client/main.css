@@ -24,7 +24,8 @@
 .wrapper.history--buttons {
     text-align: center;
 }
-.wrapper.history--buttons .am-button + .am-button {
+.wrapper.history--buttons .am-button + .am-button,
+.wrapper.history--buttons .ant-btn + .ant-btn {
     margin-left: 10px;
 }
 
