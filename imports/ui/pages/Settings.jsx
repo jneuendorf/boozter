@@ -11,6 +11,7 @@ import {
 } from '/imports/api/settings/collection'
 import * as Breakpoints from '../breakpoints'
 import { Wrapper } from '../Wrapper'
+import { LogoutButton } from '../LogoutButton'
 
 
 const alcSchema = SettingsCollection.schema.pick('alcMax', 'alcMaxDays')
@@ -66,7 +67,7 @@ export const Settings = (props) => {
 
         <Breakpoints.TabletOrMobile>
             <Accordion
-                defaultActiveKey={['beverages', 'alc']}
+                defaultActiveKey={['logout']}
                 className='settings--accordion'
             >
                 <Accordion.Panel key='beverages' header='Beverages'>
@@ -98,6 +99,11 @@ export const Settings = (props) => {
                             <ErrorsField />
                             <SubmitField value='Save' />
                         </AutoForm>
+                    </Wrapper>
+                </Accordion.Panel>
+                <Accordion.Panel key='logout' header='System'>
+                    <Wrapper>
+                        <LogoutButton />
                     </Wrapper>
                 </Accordion.Panel>
             </Accordion>
