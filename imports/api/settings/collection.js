@@ -83,17 +83,3 @@ Settings.schema = new SimpleSchema({
 })
 
 Settings.attachSchema(Settings.schema)
-// Settings.rawCollection().createIndex('')
-
-
-export const bridge = new SimpleSchema2Bridge(Settings.schema)
-
-// export const ensureUserSettings = (userId) => {
-//     if (Settings.findOne({ userId }) === undefined) {
-//         console.log('INITIALIZING SETTINGS')
-//         Settings.insert({
-//             userId,
-//             ...Settings.schema.clean({}),
-//         })
-//     }
-// }
