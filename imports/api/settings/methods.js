@@ -1,21 +1,15 @@
 import { Meteor } from 'meteor/meteor'
 
 import { Settings } from './collection'
-import { userAuthorizedMethods } from '/utils/meteor/methods'
 
 
-Meteor.methods(userAuthorizedMethods({
-    // 'settings.init'() {
-    //     console.log('SETTINGS INIT')
-    //    if (Settings.findOne({userId: this.userId}) === undefined) {
-    //        Settings.insert({
-    //            userId: this.userId,
-    //            ...Settings.schema.clean({}),
-    //        })
-    //    }
+Meteor.methods({
+    'settings.upsert'(settings) {
+        const userId = this.userId
+        if (!userId) {
+            throw new Meteor.Error('Not authorized.')
+        }
 
-    // },
-    'settings.upsert'(userId, settings) {
         console.log("SETTINGS.UPSERT", userId, settings)
 
         const { beverages } = settings
@@ -26,4 +20,4 @@ Meteor.methods(userAuthorizedMethods({
 
         Settings.upsert({userId}, { $set: settings })
     }
-}))
+})

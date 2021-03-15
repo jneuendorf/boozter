@@ -8,6 +8,10 @@ import { History } from './collection'
 
 Meteor.publish('history', function () {
     const userId = this.userId
+    if (!userId) {
+        return this.ready()
+    }
+
     return History.find(
         {
             userId,
@@ -23,6 +27,10 @@ Meteor.publish('history', function () {
 const MS_PER_DAY = 1000 * 60 * 60 * 24
 Meteor.publish('history.recent', function () {
     const userId = this.userId
+    if (!userId) {
+        return this.ready()
+    }
+
     const settings = Settings.findOne({ userId })
     const { alcMaxDays } = settings
     console.log('date >=', new Date(Date.now() - alcMaxDays * MS_PER_DAY))
