@@ -1,5 +1,6 @@
 import React, { Fragment, useCallback, useState } from 'react'
 import { useTracker } from 'meteor/react-meteor-data'
+import { Button } from 'antd'
 import { Button as MobileButton } from 'antd-mobile'
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
 
@@ -20,7 +21,6 @@ import {
 import { Chart } from './Chart'
 
 
-const ERROR_NO_SETTINGS = 'No settings'
 const MS_PER_DAY = 1000 * 60 * 60 * 24
 
 
@@ -49,8 +49,6 @@ export const Overview = () => {
 
         const userId = user._id
         const settings = SettingsCollection.findOne({ userId })
-
-        // console.log('settings', settings)
         const { beverages, alcMax, alcMaxDays } = settings
         const sortedBeverages = [...beverages].sort(
             (a, b) => b.isFavorite - a.isFavorite
@@ -76,7 +74,6 @@ export const Overview = () => {
                 }))
                 .sort((a, b) => a.x - b.x)
         )
-        // console.log('history', history)
         const initialBeverage = sortedBeverages[0]
         const model = (
             isSimpleForm
@@ -102,10 +99,42 @@ export const Overview = () => {
         }
     })
 
-    // console.log('model', history)
     return <Fragment>
         <Breakpoints.Desktop>
-            1
+            <Chart
+                data={history}
+                annotationValue={alcMax}
+                height={200}
+            />
+            <Wrapper style={{paddingRight: '0', textAlign: 'right'}}>
+                <Button
+                    icon={
+                        isSimpleForm
+                            ? <PlusCircleOutlined />
+                            : <MinusCircleOutlined />
+                    }
+                    onClick={toggleForm}
+                >
+                    {
+                        isSimpleForm
+                            ? 'more details'
+                            : 'less details'
+                    }
+                </Button>
+            </Wrapper>
+            {
+                isSimpleForm
+                    ? <SimpleBeverageForm
+                        model={model}
+                        disabled={isLoading}
+                        beverages={beverages}
+                    />
+                    : <ComplexBeverageForm
+                        model={model}
+                        disabled={isLoading}
+                        beverages={beverages}
+                    />
+            }
         </Breakpoints.Desktop>
 
         <Breakpoints.TabletOrMobile>

@@ -49,6 +49,7 @@ export const Settings = (props) => {
 
     return <Spin spinning={isLoading} tip='Loading...'>
         <Breakpoints.Desktop>
+            <Wrapper />
             <AutoForm
                 schema={bridge}
                 model={settings}

@@ -49,17 +49,14 @@ const getAnnotations = memoize(annotationValue => [{
     },
 }])
 
-const getChartProps = annotationValue => ({
-    ...STATIC_CHART_PROPS,
-    annotations: getAnnotations(annotationValue),
-})
 
-
-export const Chart = ({ data=[], annotationValue }) => (
+export const Chart = ({ data=[], annotationValue, ...props }) => (
     data.length >= 2
         ? <Line
+            {...STATIC_CHART_PROPS}
+            {...props}
             data={data}
-            {...getChartProps(annotationValue)}
+            annotations={getAnnotations(annotationValue)}
         />
         : <Empty
             description='Insufficient data'

@@ -6,6 +6,7 @@ import { History as HistoryCollection } from '/imports/api/history/collection'
 import { Settings as SettingsCollection } from '/imports/api/settings/collection'
 import { aggregatedHistory } from '/imports/ui/utils'
 import * as Breakpoints from '../../breakpoints'
+import { Wrapper } from '../../Wrapper'
 import { MobileHistory } from './MobileHistory'
 import { DesktopHistory } from './DesktopHistory'
 
@@ -32,6 +33,7 @@ export const History = (props) => {
 
     return <Spin spinning={isLoading} tip='Loading...'>
         <Breakpoints.Desktop>
+            <Wrapper />
             <DesktopHistory history={history} />
         </Breakpoints.Desktop>
 

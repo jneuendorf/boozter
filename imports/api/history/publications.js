@@ -33,7 +33,7 @@ Meteor.publish('history.recent', function () {
 
     const settings = Settings.findOne({ userId })
     const { alcMaxDays } = settings
-    console.log('date >=', new Date(Date.now() - alcMaxDays * MS_PER_DAY))
+    // console.log('date >=', new Date(Date.now() - alcMaxDays * MS_PER_DAY))
     return History.find(
         {
             userId,
